@@ -1,0 +1,28 @@
+{
+  "name": "restful-api",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Ashishrupani/RESTful-api#readme",
+  "bugs": {
+    "url": "https://github.com/Ashishrupani/RESTful-api/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashishrupani/RESTful-api.git"
+  },
+  "license": "ISC",
+  "author": "Ashish",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "server": "node ./src/server.js",
+    "dev":"nodemon ./src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
