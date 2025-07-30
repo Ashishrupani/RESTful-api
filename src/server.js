@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import userRoutes from './routes/userRoutes.js'
 
 //config environmental variables
 dotenv.config();
@@ -22,7 +23,12 @@ app.use(express.json());
 app.get(`/`,(req,res)=>{
     console.log(`User has hit the server`);
     res.status(200).send(`<h1>Welcome To Home Page</h1>`);
+    //res.status(200).json({
+    //  message : "This is home page"
+    // });
 });
+
+app.use('/api/user', userRoutes);
 
 //Listen for connections
 app.listen(PORT, ()=>{
