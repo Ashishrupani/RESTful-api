@@ -19,18 +19,16 @@ const PORT = 5000;
 
 //Middleware
 app.use(express.json());
+app.use('/api/user', userRoutes);
+app.use('/api/auth', authRoutes);
 
 //Routes
 app.get(`/`,(req,res)=>{
     console.log(`User has hit the server`);
     res.status(200).send(`<h1>Welcome To Home Page</h1>`);
-    //res.status(200).json({
-    //  message : "This is home page"
-    // });
 });
 
-app.use('/api/user', userRoutes);
-app.use('/api/auth', authRoutes);
+
 
 //Listen for connections
 app.listen(PORT, ()=>{
