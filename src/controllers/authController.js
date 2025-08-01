@@ -1,29 +1,40 @@
 import User from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
-import { errorHandler } from "../utils/errorHandler.js";
-import jwt from "jsonwebtoken";
+import { tokenGenerator } from "../utils/tokenGenerator.js";
+
+const DAY = 86400000;
 
 export const signup = async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name , email, password } = req.body;
 
     try {
 
+        if(!name || !email || !password) throw new Error("All fields are required!");
+
         //See if a user with that email already exists
         const userExists = await User.findOne({ email });
-        if (userExists) return next(errorHandler(401, "Email already exists"));
+        if (userExists) throw new Error("Email already exists");
         
         //Create new user and hash the password
         const hashedPassword = bcryptjs.hashSync(password, 10);
-        const user = new User({ email, password: hashedPassword });
+
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
+        const verificationTokenExpiry = Date.now() + DAY; //24 hours expiry time
+        const user = new User({ name, email, password: hashedPassword, verificationToken, verificationTokenExpiry});
         await user.save();
 
-        res.status(201).send("User created succesfully");
+        //JWT token
+        tokenGenerator(res, user._id);
+
+        user.password = "";
+
+        res.status(201).json({sucess : true, message : "User created succesfully", user : user});
     } catch (error) {
-        next(error);
+        res.status(401).json({sucess : false, message : error.message});
     }
 };
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     const {email, password} = req.body;
 
     try {
@@ -31,22 +42,25 @@ export const login = async (req, res, next) => {
 
         //See if this user exists
         const userExists = await User.findOne({ email });
-        if (!userExists) return next(errorHandler(401, "User not found"));
+        if (!userExists) throw new Error("Invalid credentials");
 
         //If user exists, validate password
         const validPassword = bcryptjs.compareSync(password, userExists.password);
-        if (!validPassword) return next(errorHandler(401, "Invalid credentials"));
+        if (!validPassword) throw new Error("Invalid credentials");
         const {password : hashedPassword, ...rest} = userExists._doc;
 
-        //create access token
-        const token = jwt.sign({id : userExists._id}, process.env.JWT_SECRET);
-        const expireTime = new Date(Date.now() + 3600000);
+        //Send a one time pin
 
-        res.cookie('access_token', token, { httpOnly : true, expires: expireTime, secure : true})
-        .status(200)
-        .json(rest);
+
+        res.status(200).json({sucess : true, message : "User login in success"});
+
+       
 
     } catch (error) {
-        next(error);
+        res.status(401).json({sucess : false, message : error.message});
     }
  };
+
+ export const signout = async (req, res)=> {
+    res.status(200).json({sucess : true, message : "Signout works"});
+ }
