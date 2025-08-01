@@ -26,6 +26,7 @@ export const signup = async (req, res, next) => {
         //JWT token
         tokenGenerator(res, user._id);
 
+        user._id = "";
         user.password = "";
 
         res.status(201).json({sucess : true, message : "User created succesfully", user : user});
