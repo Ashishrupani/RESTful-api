@@ -1,6 +1,7 @@
 import User from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
 import { tokenGenerator } from "../utils/tokenGenerator.js";
+import { sendVerificationEmail , sendWelcomeEmail} from "../mailtrap/emails.js";
 
 const DAY = 86400000;
 
@@ -25,6 +26,9 @@ export const signup = async (req, res, next) => {
 
         //JWT token
         tokenGenerator(res, user._id);
+
+        //Send verification code
+        sendVerificationEmail(user.email, verificationToken);
 
         user._id = "";
         user.password = "";
@@ -63,5 +67,32 @@ export const login = async (req, res) => {
  };
 
  export const signout = async (req, res)=> {
+    res.clearCookie('access_token');
     res.status(200).json({sucess : true, message : "Signout works"});
+ }
+
+
+ export const verifyEmail = async (req, res) => {
+    const {verificationToken} = req.body;
+
+    try {
+        const userExists = await User.findOne({verificationToken , verificationTokenExpiry : { $gt: Date.now()}});
+
+        if(!userExists) throw new Error('Invalid or verification code has expired');
+
+        userExists.isVerified = true;
+        //remove code and expiry
+        userExists.verificationToken = undefined;
+        userExists.verificationTokenExpiry = undefined;
+
+        //save user
+        await userExists.save();
+
+        await sendWelcomeEmail(userExists.email, userExists.name);
+
+        res.status(200).json({sucess:true, message: "User verified"});
+
+    } catch (error) {
+        res.status(401).json({sucess: false, message : error.message});
+    }
  }
