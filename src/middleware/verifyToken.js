@@ -1,0 +1,21 @@
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+
+export const verifyToken = async (req, res, next)=>{
+    dotenv.config();
+    const token = req.cookies.accesstoken;
+    if(!token) return res.status(500).json({success:false,message:"Unauthorized!. no token provided."});
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        if(!decoded) return res.status(500).json({success:false,message:"Token not valid..Unauthorized"});
+
+        req.userId = decoded.id;
+        next();
+        
+    } catch (error) {
+        console.log("Error validating token", error);
+        return res.status(500).json({success: false, meesage: error.meesage});
+    }
+}

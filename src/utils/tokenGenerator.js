@@ -11,7 +11,7 @@ export const tokenGenerator = (res, userId)=>{
         expiresIn: '7d',
     });
 
-    res.cookie('access_token', token, { httpOnly : true, secure : process.env.NODE_ENV === "production", sameSite : "strict", 
+    res.cookie('accesstoken', token, { httpOnly : true, secure : process.env.NODE_ENV === "production", sameSite : "strict", 
         maxAge: 7 * DAY,
     });
 

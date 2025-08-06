@@ -1,4 +1,4 @@
-import { VERIFICATION_EMAIL_TEMPLATE } from "./emailTemplates.js"
+import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE } from "./emailTemplates.js"
 import { mailTrapClient , sender} from "./mailtrapConfig.js"
 
 
@@ -38,4 +38,43 @@ export const sendWelcomeEmail = async (email, name) => {
         throw Error("Error sending welcome email message");
     }
 
+}
+
+export const sendPasswordResetEmail = async (email, resetURL) => {
+    const recipient = [{email}];
+    
+    try {
+        const response = await mailTrapClient.send({
+            from : sender,
+            to : recipient,
+            subject : "Forgot Password",
+            html : PASSWORD_RESET_REQUEST_TEMPLATE.replace("{resetURL}",resetURL),
+            category : "Forgot Password"
+        });
+
+        console.log("Forgot password email sent succesfull..", response);
+    } catch (error) {
+        console.log(error);
+        throw new Error("Something went wrong.. forgot password email not sent");   
+    }
+
+}
+
+export const sendPasswordResetSuccessEmail = async (email) => {
+    const recipient = [{email}];
+
+    try {
+        const response = mailTrapClient.send({
+            from : sender,
+            to : recipient,
+            subject : "Password has been reset.",
+            html : PASSWORD_RESET_SUCCESS_TEMPLATE,
+            category : "Password Reset Sucess"
+        });
+
+        console.log("Password has been reset email was successful..", response);
+    } catch (error) {
+        console.log("Something went wrong with reseting password email..", error.message);
+        throw new Error("Something went wrong with reseting password email..");
+    }
 }
