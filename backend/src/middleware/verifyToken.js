@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 
 
 export const verifyToken = async (req, res, next)=>{
-    dotenv.config();
+
     const token = req.cookies.accesstoken;
     if(!token) return res.status(500).json({success:false,message:"Unauthorized!. no token provided."});
     try {

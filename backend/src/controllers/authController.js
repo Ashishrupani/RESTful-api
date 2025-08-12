@@ -1,7 +1,6 @@
 import User from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
-import dotenv from "dotenv";
 import { tokenGenerator } from "../utils/tokenGenerator.js";
 import { sendVerificationEmail , sendWelcomeEmail, sendPasswordResetEmail, sendPasswordResetSuccessEmail} from "../mailtrap/emails.js";
 
@@ -106,7 +105,7 @@ export const login = async (req, res) => {
  }
 
  export const forgotPassword = async (req, res) => {
-    dotenv.config();
+    
     const {email} = req.body;
 
     try {
