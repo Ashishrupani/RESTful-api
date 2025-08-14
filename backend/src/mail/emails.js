@@ -28,7 +28,7 @@ export const sendWelcomeEmail = async (email, name) => {
             from : `RESTful-API <${process.env.NODE_SENDING_EMAIL_ADDRESS}>`,
             to : recipient,
             subject: "Welcome",
-            html : WELCOME_EMAIL_TEMPLATE
+            html : WELCOME_EMAIL_TEMPLATE.replace("{name}", name)
         });
 
         console.log("Welcome email sent succesfully..", response);
