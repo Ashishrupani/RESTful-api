@@ -1,26 +1,67 @@
 import FloatingShape from "./components/FloatingShape.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import LogInPage from "./pages/LogInPage.jsx";
-import {Route, Routes} from "react-router-dom";
+import { Route, Routes , Navigate} from "react-router-dom";
 import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
 import { Toaster } from "react-hot-toast";
+import { useAuthStore } from "./store/authStore.js";
+import { useEffect } from "react";
+
+const RedirectAuthenticatedUser = ({children})=> {
+  const {isAuthenticated, user} = useAuthStore();
+
+  if(isAuthenticated && user.isVerified){
+    return <Navigate to="/" replace/>
+  }
+
+  return children;
+
+}
 
 function App() {
+  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  console.log("is Authenticated", isAuthenticated);
+  console.log("User", user);
+
   return (
     <div
       className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-sky-900 
-    flex items-center justify-center relative overflow-hidden">
-      <FloatingShape color="bg-blue-500" size="w-64 h-64" top="-5%" left="10%" delay={0}/>
-      <FloatingShape color="bg-sky-500" size="w-48 h-48" top="70%" left="80%" delay={5}/>
-      <FloatingShape color="bg-blue-300" size="w-32 h-32" top="40%" left="-10%" delay={2}/>
+    flex items-center justify-center relative overflow-hidden"
+    >
+      <FloatingShape
+        color="bg-blue-500"
+        size="w-64 h-64"
+        top="-5%"
+        left="10%"
+        delay={0}
+      />
+      <FloatingShape
+        color="bg-sky-500"
+        size="w-48 h-48"
+        top="70%"
+        left="80%"
+        delay={5}
+      />
+      <FloatingShape
+        color="bg-blue-300"
+        size="w-32 h-32"
+        top="40%"
+        left="-10%"
+        delay={2}
+      />
 
       <Routes>
-        <Route path="/" element={"Home Page"}/>
-        <Route path="/signup" element={<SignUpPage />}/>
-        <Route path="/login" element={<LogInPage />}/>
-        <Route path="/verify-email" element={<VerifyEmailPage />}/>
+        <Route path="/" element={"Home Page"} />
+        <Route path="/signup" element={<RedirectAuthenticatedUser> <SignUpPage/> </RedirectAuthenticatedUser>} />
+        <Route path="/login" element={<RedirectAuthenticatedUser> <LogInPage/> </RedirectAuthenticatedUser>} />
+        <Route path="/verify-email" element={<VerifyEmailPage />} />
       </Routes>
-      <Toaster/>
+      <Toaster />
     </div>
   );
 }
