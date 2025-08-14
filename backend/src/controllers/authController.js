@@ -2,7 +2,8 @@ import User from "../models/userModel.js";
 import bcryptjs from "bcryptjs";
 import crypto from "crypto";
 import { tokenGenerator } from "../utils/tokenGenerator.js";
-import { sendVerificationEmail , sendWelcomeEmail, sendPasswordResetEmail, sendPasswordResetSuccessEmail} from "../mailtrap/emails.js";
+//import { } from "../mailtrap/emails.js"; won't be using mailtrap anymore
+import { sendVerificationEmail , sendWelcomeEmail, sendPasswordResetEmail, sendPasswordResetSuccessEmail} from "../mail/emails.js";
 
 const DAY = 86400000;
 
