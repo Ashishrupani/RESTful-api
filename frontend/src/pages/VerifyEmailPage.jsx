@@ -1,12 +1,15 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const VerifyEmailPage = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
 
-  const isLoading = false;
+  const {error, isLoading, verifyEmail} = useAuthStore();
 
   const handleChange = (index, value) => {
     const newCode = [...code];
@@ -32,7 +35,30 @@ const VerifyEmailPage = () => {
     }
   };
 
-  const handleKeyDown = (index, e) => {};
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !code[index] && index > 0){
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleSubmit = async(e)=> {
+    e.preventDefault();
+    const verificationCode = code.join("");
+    // alert(`Verification code has been submitted: ${verificationCode}`);
+    try {
+      await verifyEmail(verificationCode);
+      navigate("/");
+      toast.success("Email verified succesfully");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  
+  useEffect(() => {
+    if(code.every(digit => digit != '')){
+      handleSubmit(new Event('submit'));
+    }
+  },[code]);
 
   return (
     <div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">
