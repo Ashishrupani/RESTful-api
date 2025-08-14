@@ -1,4 +1,4 @@
-import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE } from "./emailTemplates.js"
+import { PASSWORD_RESET_REQUEST_TEMPLATE, PASSWORD_RESET_SUCCESS_TEMPLATE, VERIFICATION_EMAIL_TEMPLATE , WELCOME_EMAIL_TEMPLATE} from "./emailTemplates.js"
 import { transport } from "./sendMail.js"
 
 
@@ -28,7 +28,7 @@ export const sendWelcomeEmail = async (email, name) => {
             from : `RESTful-API <${process.env.NODE_SENDING_EMAIL_ADDRESS}>`,
             to : recipient,
             subject: "Welcome",
-            html : `<h1>Welcome ${name}</h1>`
+            html : WELCOME_EMAIL_TEMPLATE
         });
 
         console.log("Welcome email sent succesfully..", response);
