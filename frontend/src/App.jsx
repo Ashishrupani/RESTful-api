@@ -6,7 +6,27 @@ import VerifyEmailPage from "./pages/VerifyEmailPage.jsx";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
+import HomePage from "./pages/HomePage.jsx";
+import LoadingSpinner from "./components/LoadingSpinner.jsx";
 
+//Protect Routes that need auth
+const ProtectedRoute = ({children}) => {
+  const {isAuthenticated, user} = useAuthStore();
+
+  if(!isAuthenticated){
+    return <Navigate to="/login" replace/>;
+  }
+
+  if(!user.isVerified){
+    return <Navigate to="/verify-email" replace/>;
+  }
+
+  //if auth and verified pass
+  return children;
+
+}
+
+//Redirect authenticated users
 const RedirectAuthenticatedUser = ({children})=> {
   const {isAuthenticated, user} = useAuthStore();
 
@@ -25,8 +45,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  console.log("is Authenticated", isAuthenticated);
-  console.log("User", user);
+  if(isCheckingAuth) return <LoadingSpinner />;
 
   return (
     <div
@@ -56,7 +75,7 @@ function App() {
       />
 
       <Routes>
-        <Route path="/" element={"Home Page"} />
+        <Route path="/" element={<ProtectedRoute> <HomePage/> </ProtectedRoute>} />
         <Route path="/signup" element={<RedirectAuthenticatedUser> <SignUpPage/> </RedirectAuthenticatedUser>} />
         <Route path="/login" element={<RedirectAuthenticatedUser> <LogInPage/> </RedirectAuthenticatedUser>} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />

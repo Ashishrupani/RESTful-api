@@ -55,7 +55,7 @@ const VerifyEmailPage = () => {
   }
   
   useEffect(() => {
-    if(code.every(digit => digit != '')){
+    if(code.every(digit => digit !== '')){
       handleSubmit(new Event('submit'));
     }
   },[code]);
