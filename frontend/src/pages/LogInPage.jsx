@@ -42,7 +42,8 @@ const LogInPage = () => {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)
+            }
           />
 
           <div className="flex items-center mb-6">

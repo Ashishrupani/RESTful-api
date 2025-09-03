@@ -8,6 +8,7 @@ import { useAuthStore } from "./store/authStore.js";
 import { useEffect } from "react";
 import HomePage from "./pages/HomePage.jsx";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage.jsx";
 
 //Protect Routes that need auth
 const ProtectedRoute = ({children}) => {
@@ -38,8 +39,23 @@ const RedirectAuthenticatedUser = ({children})=> {
 
 }
 
+//Only verify Authenticated users
+const ProtectedVerifyEmailRoute = ({children}) => {
+  const {isAuthenticated, user} = useAuthStore();
+
+  if (user && user.isVerified){
+    return <Navigate to = "/" replace/>;
+  }
+
+  if (user && isAuthenticated){
+    return children;
+  }
+
+  return <Navigate to = "/" replace/>;
+}
+
 function App() {
-  const { isCheckingAuth, checkAuth, isAuthenticated, user } = useAuthStore();
+  const { isCheckingAuth, checkAuth} = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -78,7 +94,8 @@ function App() {
         <Route path="/" element={<ProtectedRoute> <HomePage/> </ProtectedRoute>} />
         <Route path="/signup" element={<RedirectAuthenticatedUser> <SignUpPage/> </RedirectAuthenticatedUser>} />
         <Route path="/login" element={<RedirectAuthenticatedUser> <LogInPage/> </RedirectAuthenticatedUser>} />
-        <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/verify-email" element={ <ProtectedVerifyEmailRoute><VerifyEmailPage /></ProtectedVerifyEmailRoute>} />
+        <Route path="/forgot-password" element={<RedirectAuthenticatedUser> <ForgotPasswordPage/> </RedirectAuthenticatedUser>} />
       </Routes>
       <Toaster />
     </div>
