@@ -52,6 +52,7 @@ const VerifyEmailPage = () => {
     } catch (error) {
       console.log(error);
     }
+    navigate("/");
   }
   
   useEffect(() => {
