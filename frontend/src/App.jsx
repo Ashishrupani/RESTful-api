@@ -93,6 +93,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<ProtectedRoute> <HomePage/> </ProtectedRoute>} />
+        {/*<Route path="/" element={ <HomePage/>} />*/}
         <Route path="/signup" element={<RedirectAuthenticatedUser> <SignUpPage/> </RedirectAuthenticatedUser>} />
         <Route path="/login" element={<RedirectAuthenticatedUser> <LogInPage/> </RedirectAuthenticatedUser>} />
         <Route path="/verify-email" element={ <ProtectedVerifyEmailRoute><VerifyEmailPage /></ProtectedVerifyEmailRoute>} />
